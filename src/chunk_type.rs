@@ -1,5 +1,7 @@
 use crate::{Error, Result};
-pub struct ChunkType(String);
+pub struct ChunkType {
+    chunk_type: [u8; 4],
+}
 
 
 impl TryFrom<[u8; 4]> for ChunkType {
@@ -18,9 +20,7 @@ impl TryFrom<[u8; 4]> for ChunkType {
             }
         }
 
-        let value_string = String::from_utf8(value.to_vec()).unwrap();
-
-        Ok(ChunkType(value_string))
+        Ok(ChunkType{ chunk_type: value })
     }
 }
 
