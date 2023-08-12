@@ -13,8 +13,9 @@ impl TryFrom<[u8; 4]> for ChunkType {
         if value.len() != 4 {
             return Err("ChunkType only accepts an array of 4 elements".into())
         }
-        let lower_range = 67..91;
-        let upper_range = 97..123;
+        
+        let lower_range = 67..91; // This range represents the ASCII codes to upper case A - Z
+        let upper_range = 97..123; // This range represents the ASCII codes to lower case a - z
 
         for byte in &value {
             if !lower_range.contains(byte) && !upper_range.contains(byte) {
@@ -34,6 +35,19 @@ impl FromStr for ChunkType {
             return Err("ChunkType can only take 4 characters".into())
         }
 
+        if !s.is_ascii() {
+            return Err("ChunkType takes ASCII characters only".into())
+        }
+
+        let lower_range = 67..91;
+        let upper_range = 97..123;
+
+        for byte in s.as_bytes() {
+            if !lower_range.contains(byte) && !upper_range.contains(byte) {
+                return Err("ChunkType only accepts bytes with the range(67 - 90) and (97 - 122)".into())
+            }
+        }
+
         let chunk_type: [u8; 4] = s.as_bytes().try_into()?;
 
         Ok(ChunkType { chunk_type })
@@ -47,6 +61,8 @@ impl ChunkType {
         self.chunk_type
     }
 
+    /// This checks if a type represents a critical chunk(cannot be ignored be ignored by the decoder)
+    /// or an ancillary chunk(can be ignored by the decoder)
     pub fn is_critical(&self) -> bool {
 
         self.chunk_type[0].is_ascii_uppercase()
