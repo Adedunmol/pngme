@@ -1,14 +1,16 @@
 use crate::{Error, Result};
-pub struct ChunkType {
-    chunk_type: [u8; 4],
-}
+use std::str::FromStr;
 
+#[derive(Debug, PartialEq)]
+pub struct ChunkType {
+    chunk_type: [u8; 4], // Specifies the type of the chunk in a png file and it is not more than 4 bytes
+}
 
 impl TryFrom<[u8; 4]> for ChunkType {
     type Error = Error;
 
     fn try_from(value: [u8; 4]) -> Result<Self> {
-        if value.len() < 4 || value.len() > 4 {
+        if value.len() != 4 {
             return Err("ChunkType only accepts an array of 4 elements".into())
         }
         let lower_range = 67..91;
@@ -21,6 +23,28 @@ impl TryFrom<[u8; 4]> for ChunkType {
         }
 
         Ok(ChunkType{ chunk_type: value })
+    }
+}
+
+impl FromStr for ChunkType {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        if s.len() != 4 {
+            return Err("ChunkType can only take 4 characters".into())
+        }
+
+        let chunk_type: [u8; 4] = s.as_bytes().try_into()?;
+
+        Ok(ChunkType { chunk_type })
+    }
+
+}
+
+impl ChunkType {
+    pub fn bytes(&self) -> [u8; 4] {
+
+        return self.chunk_type
     }
 }
 
