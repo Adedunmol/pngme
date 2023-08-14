@@ -20,7 +20,7 @@ impl TryFrom<&[u8]> for Chunk {
         let chunk_type: [u8; 4] = value[4..8].try_into().unwrap();
 
         // The next bytes of length "length" represent the data
-        let end = 8 + length + 1;
+        let end = 8 + length; // + 1
         let chunk_data: Vec<u8> = value[8..end as usize].try_into().unwrap();
 
         // The remaining bytes are for the crc
@@ -41,12 +41,7 @@ impl Chunk {
         let length: u32 = data.len().try_into().unwrap();
         let new_chunk_data = &data[..];
 
-        eprintln!("data: {:?}", data);
-        eprintln!("new chunk data: {:?}", new_chunk_data);
-
         let new_data = [&chunk_type.bytes()[..], new_chunk_data].concat();
-
-        eprintln!("{:?}", new_data);
 
         let crc = CASTAGNOLI.checksum(&new_data[..]);
 
@@ -61,6 +56,18 @@ impl Chunk {
     pub fn crc(&self) -> u32 {
 
         self.crc
+    }
+
+    pub fn chunk_type(&self) -> ChunkType {
+
+        ChunkType::try_from(self.chunk_type).unwrap()
+    }
+
+    pub fn data_as_string(&self) -> Result<String> {
+
+        let data = std::str::from_utf8(&self.chunk_data).expect("Invalid UTF-8").to_string();
+
+        Ok(data)
     }
 }
 
@@ -105,25 +112,25 @@ mod tests {
         assert_eq!(chunk.length(), 42);
     }
 
-    // #[test]
-    // fn test_chunk_type() {
-    //     let chunk = testing_chunk();
-    //     assert_eq!(chunk.chunk_type().to_string(), String::from("RuSt"));
-    // }
+    #[test]
+    fn test_chunk_type() {
+        let chunk = testing_chunk();
+        assert_eq!(chunk.chunk_type().to_string(), String::from("RuSt"));
+    }
 
-    // #[test]
-    // fn test_chunk_string() {
-    //     let chunk = testing_chunk();
-    //     let chunk_string = chunk.data_as_string().unwrap();
-    //     let expected_chunk_string = String::from("This is where your secret message will be!");
-    //     assert_eq!(chunk_string, expected_chunk_string);
-    // }
+    #[test]
+    fn test_chunk_string() {
+        let chunk = testing_chunk();
+        let chunk_string = chunk.data_as_string().unwrap();
+        let expected_chunk_string = String::from("This is where your secret message will be!");
+        assert_eq!(chunk_string, expected_chunk_string);
+    }
 
-    // #[test]
-    // fn test_chunk_crc() {
-    //     let chunk = testing_chunk();
-    //     assert_eq!(chunk.crc(), 2882656334);
-    // }
+    #[test]
+    fn test_chunk_crc() {
+        let chunk = testing_chunk();
+        assert_eq!(chunk.crc(), 2882656334);
+    }
 
     // #[test]
     // fn test_valid_chunk_from_bytes() {
