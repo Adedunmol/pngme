@@ -1,9 +1,36 @@
+use crate::{Error, Result, chunk_type};
+
 
 pub struct Chunk {
     length: u32,
     chunk_type: [u8; 4],
     chunk_data: Vec<u8>,
     crc: u32 // (Cyclic Redundancy Check)
+}
+
+impl TryFrom<&[u8]> for Chunk {
+    type Error = Error;
+    fn try_from(value: &[u8]) -> Result<Self> {
+
+        // The first 4 bytes represent the length
+        let length_bytes: [u8; 4] = value[..4].try_into().unwrap();
+        let length = u32::from_be_bytes(length_bytes);
+
+        // The next 4 bytes represent the chunk_type
+        let chunk_type: [u8; 4] = value[4..9].try_into().unwrap();
+
+        // The next bytes of length "length" represent the data
+        let end = 9 + length + 1;
+        let chunk_data: Vec<u8> = value[9..end as usize].try_into().unwrap();
+
+        // The remaining bytes are for the crc
+        let chunk_length = value.len();
+        let start = chunk_length - 4;
+        let crc_bytes: [u8; 4] = value[start..].try_into().unwrap();
+        let crc = u32::from_be_bytes(crc_bytes);
+
+        Ok( Chunk { length, chunk_type, chunk_data, crc } )
+    }
 }
 
 // #![allow(unused_variables)]
