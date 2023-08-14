@@ -1,5 +1,5 @@
 use crate::{Error, Result, chunk_type::ChunkType};
-use crc::{Crc, CRC_32_ISCSI};
+use crc::{Crc, CRC_32_ISO_HDLC};
 
 pub struct Chunk {
     length: u32,
@@ -36,11 +36,17 @@ impl TryFrom<&[u8]> for Chunk {
 impl Chunk {
     fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
 
-        pub const CASTAGNOLI: Crc<u32> = Crc::<u32>::new(&CRC_32_ISCSI);
+        pub const CASTAGNOLI: Crc<u32> = Crc::<u32>::new(&CRC_32_ISO_HDLC);
         
         let length: u32 = data.len().try_into().unwrap();
-        let new_chunk_data = &data[..]; 
+        let new_chunk_data = &data[..];
+
+        eprintln!("data: {:?}", data);
+        eprintln!("new chunk data: {:?}", new_chunk_data);
+
         let new_data = [&chunk_type.bytes()[..], new_chunk_data].concat();
+
+        eprintln!("{:?}", new_data);
 
         let crc = CASTAGNOLI.checksum(&new_data[..]);
 
