@@ -1,10 +1,30 @@
-use crate::chunk::Chunk;
-
+use crate::{chunk::Chunk, chunk_type::ChunkType, Error, Result};
 
 pub struct Png {
     header: [u8; 8],
     chunks: Vec<Chunk>,
 }
+
+impl Png {
+    pub const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
+}
+
+// impl TryFrom<&[u8]> for Png {
+//     type Error = Error;
+//     fn try_from(value: &[u8]) -> Result<Self> {
+        
+//         let header: [u8; 8] = value[..8].try_into().unwrap();
+
+//         if header != Png::STANDARD_HEADER {
+
+//             return Err("Invalid header".into())
+//         }
+
+//         let chunks: Vec<u8> = value[8..].try_into().unwrap();
+
+//         Ok( Png { header, chunks: vec![1, 2, 3] } )
+//     }
+// }
 
 // #![allow(unused_variables)]
 // fn main() {

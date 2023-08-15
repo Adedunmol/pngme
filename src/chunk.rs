@@ -79,6 +79,20 @@ impl Chunk {
 
         Ok(data)
     }
+
+    pub fn as_bytes(&self) -> Vec<u8> {
+
+        let result = self.length
+                            .to_be_bytes()
+                            .iter()
+                            .cloned()
+                            .chain(self.chunk_type.iter().cloned())
+                            .chain(self.chunk_data.iter().cloned())
+                            .chain(self.crc.to_be_bytes().iter().cloned())
+                            .collect();
+
+        result
+    }
 }
 
 impl fmt::Display for Chunk {
