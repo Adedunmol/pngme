@@ -14,12 +14,12 @@ impl TryFrom<[u8; 4]> for ChunkType {
             return Err("ChunkType only accepts an array of 4 elements".into())
         }
         
-        let lower_range = 67..91; // This range represents the ASCII codes to upper case A - Z
+        let lower_range = 65..91; // This range represents the ASCII codes to upper case A - Z
         let upper_range = 97..123; // This range represents the ASCII codes to lower case a - z
 
         for byte in &value {
             if !lower_range.contains(byte) && !upper_range.contains(byte) {
-                return Err("ChunkType only accepts bytes with the range(67 - 90) and (97 - 122)".into())
+                return Err("ChunkType only accepts bytes with the range(65 - 90) and (97 - 122)".into())
             }
         }
 
@@ -39,12 +39,12 @@ impl FromStr for ChunkType {
             return Err("ChunkType takes ASCII characters only".into())
         }
 
-        let lower_range = 67..91;
+        let lower_range = 65..91;
         let upper_range = 97..123;
 
         for byte in s.as_bytes() {
             if !lower_range.contains(byte) && !upper_range.contains(byte) {
-                return Err("ChunkType only accepts bytes with the range(67 - 90) and (97 - 122)".into())
+                return Err("ChunkType only accepts bytes with the range(65 - 90) and (97 - 122)".into())
             }
         }
 
