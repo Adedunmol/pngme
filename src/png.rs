@@ -21,13 +21,17 @@ impl TryFrom<&[u8]> for Png {
         }
 
         let mut chunks: Vec<Chunk> = vec![];
-        let mut i = 8;
+        let mut start = 8;
         let crc_bytes_length: usize = 4;
         
-        while i < value.len() && i != value.len() {
+        while start < value.len() && start != value.len() {
 
-            let chunk = Chunk::try_from(&value[i..]).unwrap();
-            i = chunk.length() as usize + crc_bytes_length;
+            let length_bytes: [u8; 4] = value[start..start + 4].try_into().unwrap();
+            let length = u32::from_be_bytes(length_bytes);
+            let end = length as usize + crc_bytes_length;
+
+            let chunk = Chunk::try_from(&value[start..end]).unwrap();
+            start = end;
 
             chunks.push(chunk);
         }
