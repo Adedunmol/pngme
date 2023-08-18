@@ -3,6 +3,7 @@ use std::fmt;
 use crate::{Error, Result, chunk_type::ChunkType};
 use crc::{Crc, CRC_32_ISO_HDLC};
 
+#[derive(Debug)]
 pub struct Chunk {
     length: u32,
     chunk_type: [u8; 4],
