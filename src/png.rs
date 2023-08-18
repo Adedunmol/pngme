@@ -17,6 +17,16 @@ impl Png {
 
         &self.chunks[..]
     }
+
+    pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
+
+        self.chunks.iter().find(|chunk| chunk.chunk_type().to_string() == chunk_type)
+    }
+
+    pub fn append_chunk(&mut self, chunk: Chunk) {
+
+        self.chunks.push(chunk)
+    }
 }
 
 impl TryFrom<&[u8]> for Png {
@@ -161,23 +171,23 @@ mod tests {
         assert_eq!(chunks.len(), 3);
     }
 
-    // #[test]
-    // fn test_chunk_by_type() {
-    //     let png = testing_png();
-    //     let chunk = png.chunk_by_type("FrSt").unwrap();
-    //     assert_eq!(&chunk.chunk_type().to_string(), "FrSt");
-    //     assert_eq!(&chunk.data_as_string().unwrap(), "I am the first chunk");
+    #[test]
+    fn test_chunk_by_type() {
+        let png = testing_png();
+        let chunk = png.chunk_by_type("FrSt").unwrap();
+        assert_eq!(&chunk.chunk_type().to_string(), "FrSt");
+        assert_eq!(&chunk.data_as_string().unwrap(), "I am the first chunk");
 
-    // }
+    }
 
-//     #[test]
-//     fn test_append_chunk() {
-//         let mut png = testing_png();
-//         png.append_chunk(chunk_from_strings("TeSt", "Message").unwrap());
-//         let chunk = png.chunk_by_type("TeSt").unwrap();
-//         assert_eq!(&chunk.chunk_type().to_string(), "TeSt");
-//         assert_eq!(&chunk.data_as_string().unwrap(), "Message");
-//     }
+    #[test]
+    fn test_append_chunk() {
+        let mut png = testing_png();
+        png.append_chunk(chunk_from_strings("TeSt", "Message").unwrap());
+        let chunk = png.chunk_by_type("TeSt").unwrap();
+        assert_eq!(&chunk.chunk_type().to_string(), "TeSt");
+        assert_eq!(&chunk.data_as_string().unwrap(), "Message");
+    }
 
 //     #[test]
 //     fn test_remove_chunk() {
