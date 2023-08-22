@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 
 /// An image message encoder CLI
 #[derive(Debug, Parser)]
@@ -8,11 +8,11 @@ use clap::{Args, Parser, Subcommand};
 #[command(about = "An image message encoder CLI program", long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
-    commands: Commands,
+    pub command: Commands,
 }
 
 #[derive(Debug, Subcommand)]
-enum Commands {
+pub enum Commands {
     /// Encodes the message in the PNG file
     #[command(arg_required_else_help = true)]
     Encode {

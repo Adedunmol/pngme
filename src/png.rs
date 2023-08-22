@@ -100,8 +100,8 @@ impl fmt::Display for Png {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         
-        write!(f, "header: {:?}", self.header);
-        write!(f, "chunks: {:?}", self.chunks);
+        write!(f, " header: {:?} ", self.header);
+        write!(f, " chunks: {:?} ", self.chunks);
 
         Ok(())
     }
