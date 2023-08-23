@@ -1,6 +1,6 @@
 use std::{path::PathBuf, fs, str::FromStr};
 
-use crate::{args::{Cli, Commands}, Result, chunk_type::ChunkType, chunk::Chunk, png::{Png, self}};
+use crate::{args::{Cli, Commands}, Result, chunk_type::ChunkType, chunk::Chunk, png::Png};
 
 pub fn run(args: &Cli) -> Result<()> {
 
@@ -23,6 +23,10 @@ pub fn run(args: &Cli) -> Result<()> {
 
 fn encode(file_path: &PathBuf, chunk_type: &str, message: &str, output_file: &Option<PathBuf>) -> Result<()> {
     
+    if file_path.extension().unwrap() != "png" {
+        return Err("This program takes only PNG files".into())
+    }
+
     let file = fs::read(file_path)?;
 
     let mut png = Png::try_from(file.as_slice())?;
@@ -53,7 +57,7 @@ fn encode(file_path: &PathBuf, chunk_type: &str, message: &str, output_file: &Op
 fn decode(file_path: &PathBuf, chunk_type: &str) -> Result<()> {
     let file = fs::read(file_path)?;
 
-    let mut png = Png::try_from(file.as_slice())?;
+    let png = Png::try_from(file.as_slice())?;
 
     match png.chunk_by_type(chunk_type) {
         Some(chunk) => {
