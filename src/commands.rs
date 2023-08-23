@@ -4,24 +4,34 @@ use crate::{args::{Cli, Commands}, Result, chunk_type::ChunkType, chunk::Chunk, 
 
 pub fn run(args: &Cli) -> Result<()> {
 
-        if let Commands::Encode { 
+    match &args.command {
+        Commands::Encode { 
             file_path, 
             chunk_type, 
             message, 
             output_file 
-        } = &args.command {
+        } => {
             encode(file_path, chunk_type, message, output_file)?
-        } else if let Commands::Decode {
+        },
+        
+        Commands::Decode {
             file_path,
             chunk_type
-        } = &args.command {
+        } => {
             decode(file_path, chunk_type)?
-        } else if let Commands::Remove {
+        },
+        
+        Commands::Remove {
             file_path,
             chunk_type
-        } = &args.command {
+        } => {
             remove(&file_path, &chunk_type)?
+        },
+
+        Commands::Print { file_path } => {
+            print(file_path)?
         }
+    }
 
     Ok(())
 }
@@ -94,6 +104,21 @@ fn remove(file_path: &PathBuf, chunk_type: &str) -> Result<()> {
     let _ = fs::write(file_path, png.as_bytes())?;
 
     println!("Message has been removed successfully!");
+
+    Ok(())
+}
+
+fn print(file_path: &PathBuf) -> Result<()> {
+
+    if file_path.extension().unwrap() != "png" {
+        return Err("This program takes only PNG files".into())
+    }
+
+    let file = fs::read(file_path)?;
+
+    let png = Png::try_from(file.as_slice())?;
+
+    println!("{}", png);
 
     Ok(())
 }

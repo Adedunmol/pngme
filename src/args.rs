@@ -44,7 +44,7 @@ pub enum Commands {
         chunk_type: String,
     },
 
-    /// Prints the message in the PNG file
+    /// Prints the PNG file
     #[command(arg_required_else_help = true)]
     Print {
         /// Path to the PNG file
