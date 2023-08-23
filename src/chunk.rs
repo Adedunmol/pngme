@@ -99,12 +99,12 @@ impl Chunk {
 impl fmt::Display for Chunk {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Chunk {{");
-        write!(f, " Length: {}", self.length);
-        write!(f, " crc: {}", self.crc);
-        write!(f, " data: {:?}", self.chunk_data);
-        write!(f, " type: {:?}", self.chunk_type);
-        write!(f, "}}");
+        write!(f, "Chunk {{").unwrap();
+        write!(f, " Length: {}", self.length).unwrap();
+        write!(f, " crc: {}", self.crc).unwrap();
+        write!(f, " data: {:?}", self.chunk_data).unwrap();
+        write!(f, " type: {:?}", self.chunk_type).unwrap();
+        write!(f, "}}").unwrap();
 
         Ok(())
     }

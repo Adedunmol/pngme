@@ -2,10 +2,10 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-/// An image message encoder CLI
+/// An image message encoder CLI program for PNG files
 #[derive(Debug, Parser)]
 #[command(name = "pngme")]
-#[command(about = "An image message encoder CLI program", long_about = None)]
+#[command(about = "An image message encoder CLI program for PNG files", long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
