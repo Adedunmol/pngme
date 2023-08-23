@@ -1,4 +1,4 @@
-use std::{path::PathBuf, fs, str::FromStr};
+use std::{path::PathBuf, fs, str::FromStr, process};
 
 use crate::{args::{Cli, Commands}, Result, chunk_type::ChunkType, chunk::Chunk, png::Png};
 
@@ -16,6 +16,11 @@ pub fn run(args: &Cli) -> Result<()> {
             chunk_type
         } = &args.command {
             decode(file_path, chunk_type)?
+        } else if let Commands::Remove {
+            file_path,
+            chunk_type
+        } = &args.command {
+            remove(&file_path, &chunk_type)?
         }
 
     Ok(())
@@ -55,6 +60,11 @@ fn encode(file_path: &PathBuf, chunk_type: &str, message: &str, output_file: &Op
 }
 
 fn decode(file_path: &PathBuf, chunk_type: &str) -> Result<()> {
+
+    if file_path.extension().unwrap() != "png" {
+        return Err("This program takes only PNG files".into())
+    }
+
     let file = fs::read(file_path)?;
 
     let png = Png::try_from(file.as_slice())?;
@@ -65,6 +75,25 @@ fn decode(file_path: &PathBuf, chunk_type: &str) -> Result<()> {
         }
         None => println!("No message hidden in this image with this chunk type")
     }
+
+    Ok(())
+}
+
+fn remove(file_path: &PathBuf, chunk_type: &str) -> Result<()> {
+
+    if file_path.extension().unwrap() != "png" {
+        return Err("This program takes only PNG files".into())
+    }
+
+    let file = fs::read(file_path)?;
+
+    let mut png = Png::try_from(file.as_slice())?;
+
+    png.remove_chunk(chunk_type)?;
+
+    let _ = fs::write(file_path, png.as_bytes())?;
+
+    println!("Message has been removed successfully!");
 
     Ok(())
 }

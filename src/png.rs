@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{fmt, process};
 
 use crate::{chunk::Chunk, chunk_type::ChunkType, Error, Result};
 
@@ -37,7 +37,12 @@ impl Png {
 
     pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
 
-        let index = self.chunks.iter().position(|val| val.chunk_type().to_string() == chunk_type).unwrap();
+        let index = self.chunks.iter()
+                                        .position(|val| val.chunk_type().to_string() == chunk_type)
+                                        .unwrap_or_else(|| {
+                                            eprintln!("No chunk with this type");
+                                            process::exit(1);
+                                        });
 
         Ok(self.chunks.remove(index))
     }
